@@ -2,21 +2,26 @@
 <package format="2">
   <name>sdbackground</name>
   <version>0.0.1</version>
-  <description>The sdbackground package</description>
+  <description>Sigma Delta background extraction</description>
 
   <maintainer email="thomas.simon@ensta-paris.fr">Thomas SIMON</maintainer>
 
-  <license>Aucune, ne pas distribuer</license>
+  <license>NONE, DO NOT SHARE, SAMPLE PACKAGE</license>
 
-  <author email="antoine.manzanera@ensta-paris.fr">"Antoine Manzanera" </author> -->
+  <author email="antoine.manzanera@ensta-paris.fr">"Antoine Manzanera" </author>
   
   <buildtool_depend>catkin</buildtool_depend>
   
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
+  <build_depend>image_common</build_depend>
+
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>image_common</build_depend>
+
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>image_common</exec_depend>
 
 </package>
