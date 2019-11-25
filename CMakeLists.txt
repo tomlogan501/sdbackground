@@ -10,7 +10,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
-  image_common
+  image_transport
 )
 
 ## System dependencies are found with CMake's conventions

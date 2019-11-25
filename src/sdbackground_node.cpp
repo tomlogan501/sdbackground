@@ -1,4 +1,3 @@
-
 /*
  * ROS
  */
@@ -13,7 +12,8 @@
 
 void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
-  // ...
+  // Here the callback use the external code of Antoine
+  // TODO //
 }
 
 int main(int argc, char **argv)
@@ -22,8 +22,8 @@ int main(int argc, char **argv)
   ros::NodeHandle nh;
 
   image_transport::ImageTransport it(nh);
-  image_transport::Subscriber sub = it.subscribe("in_image_topic", 1, imageCallback);
-  image_transport::Publisher pub = it.advertise("out_image_topic", 1);
+  image_transport::Subscriber sub = it.subscribe("in_image", 1, imageCallback);
+  image_transport::Publisher pub = it.advertise("out_image", 1);
 
   ros::spin();
 }
