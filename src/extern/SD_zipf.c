@@ -172,9 +172,9 @@ void routine_UpdateN(byte **E, int i0, int i1, int j0, int j1, float fg_pts_rate
 #define CHRONO(X, str) t1=dtime(); X; t2 = dtime(); dt = t2-t1; printCPP(str, dt, size); 
 
 /* --------------------------- */
-int main(int argc, char *argv[])
+//int main(int argc, char *argv[])
 /* --------------------------- */
-{
+/*{
   setFreq(2.4e9);
 
   char *src_path;
@@ -298,4 +298,4 @@ int main(int argc, char *argv[])
   free_bmatrix(D, i0-bord0, i1+bord0, j0-bord0);
 
   return 0;
-}
+}*/

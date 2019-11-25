@@ -9,11 +9,14 @@
  */
 #include "extern/def.h"
 #include "extern/nrutil.h"
+#include "sdbackground_wrapper.h"
 
 void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   // Here the callback use the external code of Antoine
   // TODO //
+
+   // Routine_Put_Initial_Value(1,1,1,1,0,byte[0][0]);
 }
 
 int main(int argc, char **argv)
