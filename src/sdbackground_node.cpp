@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
     int rate;
 
-    nh.param("amplification factor", gAmpliFactor, 1);
+    nh.param("amplification_factor", gAmpliFactor, 1);
     nh.param("rate", rate, int(40));
 
     image_transport::ImageTransport it(nh);
