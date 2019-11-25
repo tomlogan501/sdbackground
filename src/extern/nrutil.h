@@ -8,13 +8,14 @@
 #define NR_END 0
 #define FREE_ARG char*
 
+#include "def.h"
 extern long nr_end;
 
 /* ------------------------------- */
 /* -- vector & matrix allocator -- */
 /* ------------------------------- */
 
- float64* f64vector(long nl, long nh);
+float64* f64vector(long nl, long nh);
 byte** bmatrix   (long nrl, long nrh, long ncl, long nch);
 rgb8** rgb8matrix(long nrl, long nrh, long ncl, long nch);
 

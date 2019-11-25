@@ -103,7 +103,7 @@ void free_f64vector(float64 *v, long nl)
   free((FREE_ARG) (v+nl-NR_END));
 }
 /* ------------------------------------------------------------- */
-void free_bmatrix(byte **m, long nrl, long nrh, long ncl)
+void free_bmatrix(unsigned  char  **m, long nrl, long nrh, long ncl)
 /* ------------------------------------------------------------- */
 /* free an uchar matrix allocated by bmatrix() */
 {

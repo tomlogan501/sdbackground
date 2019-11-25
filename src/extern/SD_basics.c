@@ -144,7 +144,7 @@ void routine_ComputeFore(byte **D, byte **V, int i0, int i1, int j0, int j1, byt
   }
 }
 
-#define CHRONO(X, str) t1=dtime(); X; t2 = dtime(); dt = t2-t1; printCPP(str, dt, size); 
+
 
 /* --------------------------- */
 //int main()
