@@ -22,4 +22,7 @@ long long readTSC (void);
 void printCPP(char *str, double dt,  int size);
 };
 
-#define CHRONO(X, str) t1=dtime(); X; t2 = dtime(); dt = t2-t1; printCPP(str, dt, size);
+#ifndef _GLIBC_RELEASE
+//#define CHRONO(X, str) t1=dtime(); X; t2 = dtime(); dt = t2-t1; printCPP(str, dt, size);
+#define CHRONO(X, str) X;
+#endif

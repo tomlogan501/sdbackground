@@ -50,7 +50,7 @@ byte** bmatrix(long nrl, long nrh, long ncl, long nch)
 /* ------------------------------------------------ */
 /* allocate an byte matrix with subscript range m[nrl..nrh][ncl..nch] */
 {
-  long i, nrow=nrh-nrl+1,ncol=nch-ncl+1;
+  long i, nrow=nrh-nrl,ncol=nch-ncl;
   byte **m;
 
   /* allocate pointers to rows */

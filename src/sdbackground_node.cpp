@@ -13,78 +13,67 @@ extern "C" {
 #include "extern/nrutil.h"
 }
 
-int gAmpliFactor = 1;
+//Debug
+#include <iostream>     // std::cout, std::end
 
-image_transport::Publisher pub;
+static int gAmpliFactor = 1;
+
+static image_transport::Publisher pub;
 
 // Image variables
-uint i0, i1,h0, h1;
-uint width, height,bord;
+static int width, height;
+static const byte v_min = 2;
+static const byte v_max = 125;
 
 // Image variables
-unsigned char **I, **M, **V, **E, **D;
+static byte **I, **M, **V, **E, **D;
+static sensor_msgs::Image::Ptr pubImage;
 
 void imageCallback(const sensor_msgs::ImageConstPtr &image)
 {
-    //For syntax keeping
-    int N = gAmpliFactor;
-
-    // created shared pointer Image with copy
-    sensor_msgs::Image::Ptr new_image =
-            boost::make_shared<sensor_msgs::Image>();
-
-    width   = uint(image->width);
-    height  = uint(image->height);
-
-    i0 = 0; i1 = height - 1;
-    h0 = 0;
-    h1 = width - 1;
-
-    byte v_min = 2;
-    byte v_max = 255;
-    //int p_m = 1; // update period of the background model
-    //int p_v = 1; // update period of the background variance
-
-    if(I == nullptr)
+    if(image->encoding == "mono8")
     {
-        I = bmatrix(i0-bord, i1+bord, h0-bord, h1+bord); // absolute difference
-        D = bmatrix(i0-bord, i1+bord, h0-bord, h1+bord); // absolute difference
-        M = bmatrix(i0-bord, i1+bord, h0-bord, h1+bord); // current SD-background
-        V = bmatrix(i0-bord, i1+bord, h0-bord, h1+bord); // current SD-variance
-        E = bmatrix(i0-bord, i1+bord, h0-bord, h1+bord); // current SD-variance
-    }
+        //For syntax keeping
+        int N = gAmpliFactor;
 
-    //Copy of the image into buffer I
-    for(uint i=0;i<width;i++)
-    {
-        for(uint j=0;j<height;j++)
+        // copy image properties
+        pubImage->header       = image->header;
+        pubImage->height       = image->height ;
+        pubImage->width        = image->width ;
+        pubImage->encoding     = image->encoding;
+        pubImage->is_bigendian = image->is_bigendian;
+        pubImage->step         = image->step;
+
+        pubImage->data.resize(pubImage->width * pubImage->height);
+
+        //Copy of the image into buffer I
+        for(uint i=0;i<uint(height);i++)
         {
-            I[i][j]=byte(image->data[i*width+j]);
+            for(uint j=0;j<uint(width);j++)
+            {
+                I[i][j]=byte(image->data[i*uint(width)+j]);
+            }
         }
-    }
 
-    // for time measure
-    long size;
-    double  t1, t2, dt;
+        // Here the callback use the external code of Antoine
+        routine_AbsoluteDifference(I,M,0, height, 0, width,D);
+        routine_UpdateV(D,0, height, 0, width,N,v_min,v_max,V);
+        routine_ComputeFore(D,V,0, height, 0, width,E);
 
-    // Here the callback use the external code of Antoine
-    size = (h1-h0+1)*(i1-i0+1);
-    CHRONO(routine_UpdateM(I,i0,i1,h0,h1,M), "MAJ Moyenne");
-    CHRONO(routine_AbsoluteDifference(I,M,i0,i1,h0,h1,D), "Calcul Difference");
-    CHRONO(routine_UpdateV(D,i0,i1,h0,h1,N,v_min,v_max,V), "MAJ Variance");
-    CHRONO(routine_ComputeFore(D,V,i0,i1,h0,h1,E), "Calcul Label");
-
-    //Copy from the buffer E to new image
-    for(uint i=0;i<width;i++)
-    {
-        for(uint j=0;j<height;j++)
+        //Copy from the buffer E to new image
+        uint new_index = 0;
+        for(uint i=0;i<uint(height);i++)
         {
-            new_image->data[i*width+j] = E[i][j];
+            for(uint j=0;j<uint(width);j++)
+            {
+                new_index = i*uint(width)+j;
+                pubImage->data[new_index] = E[i][j];
+                //FOR TESTING PURPOSE //
+                //pubImage->data[new_index] = i*255/height;
+            }
         }
+        routine_UpdateM(I,0, height, 0, width,M);
     }
-
-    //Publish
-    pub.publish(new_image);
 }
 
 int main(int argc, char **argv)
@@ -94,8 +83,22 @@ int main(int argc, char **argv)
 
     int rate;
 
-    nh.param("amplification_factor", gAmpliFactor, 1);
-    nh.param("rate", rate, int(40));
+    nh.param("amplification_factor", gAmpliFactor, 10);
+    nh.param("rate", rate, int(10));
+    nh.param("width", width, int(640));
+    nh.param("height", height, int(480));
+
+    I = bmatrix(0, height, 0, width); // absolute difference
+    D = bmatrix(0, height, 0, width); // absolute difference
+    M = bmatrix(0, height, 0, width); // current SD-background
+    V = bmatrix(0, height, 0, width); // current SD-variance
+    E = bmatrix(0, height, 0, width); // current SD-variance
+
+    Routine_Put_Initial_Value(0,height,0,width,v_min,V);
+    Routine_Put_Initial_Value(0,height,0,width,v_min,M);
+
+    // created shared pointer Image
+    pubImage = boost::make_shared<sensor_msgs::Image>();
 
     image_transport::ImageTransport it(nh);
     image_transport::Subscriber sub = it.subscribe("in_image", 1, imageCallback);
@@ -108,14 +111,16 @@ int main(int argc, char **argv)
     while (nh.ok())
     {
         ros::spinOnce();
+        //Publish
+        pub.publish(pubImage);
         r.sleep();
     }
 
-    free_bmatrix(I, i0-bord, h1+bord, h0-bord);
-    free_bmatrix(M, i0-bord, h1+bord, h0-bord);
-    free_bmatrix(V, i0-bord, h1+bord, h0-bord);
-    free_bmatrix(E, i0-bord, h1+bord, h0-bord);
-    free_bmatrix(D, i0-bord, h1+bord, h0-bord);
+    free_bmatrix(I, 0, width, 0);
+    free_bmatrix(M, 0, width, 0);
+    free_bmatrix(V, 0, width, 0);
+    free_bmatrix(E, 0, width, 0);
+    free_bmatrix(D, 0, width, 0);
 
     return 0;
 }
