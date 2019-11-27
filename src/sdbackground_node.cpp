@@ -3,6 +3,8 @@
  */
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
+#include <dynamic_reconfigure/server.h>
+#include <sdbackground/sdbgConfig.h>
 
 /*
  * EXTERN
@@ -13,24 +15,40 @@ extern "C" {
 #include "extern/nrutil.h"
 }
 
-//Debug
-#include <iostream>     // std::cout, std::end
-
-static int gAmpliFactor = 1;
+//Global parameters for dynamic use
+static int gAmpliFactor = 10;
+static int gRateFreq = 30;
 
 static image_transport::Publisher pub;
 
 // Image variables
 static int width, height;
 static const byte v_min = 2;
-static const byte v_max = 125;
+static const byte v_max = 255;
 
 // Image variables
 static byte **I, **M, **V, **E, **D;
 static sensor_msgs::Image::Ptr pubImage;
 
+///
+/// \brief callback : Callback when parameters are changed with the gui
+/// \param config : the structure config define in the cfg file
+/// \param level : N/A
+///
+void callback(sdbackground::sdbgConfig &config, uint32_t level) {
+//  ROS_INFO("Reconfigure Request: %d: Facteur d'amplification, %d: Frequence de traitement (Hz)",
+//            config.ampli_factor, config.ana_rate);
+    gAmpliFactor = config.ampli_factor;
+    gRateFreq = config.ana_rate;
+}
+
+///
+/// \brief imageCallback : Callback to treat the image and call the code through the wrapper
+/// \param image : the image send
+///
 void imageCallback(const sensor_msgs::ImageConstPtr &image)
 {
+    //Only mono for this package
     if(image->encoding == "mono8")
     {
         //For syntax keeping
@@ -81,12 +99,17 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "sdbackground");
     ros::NodeHandle nh;
 
-    int rate;
-
     nh.param("amplification_factor", gAmpliFactor, 10);
-    nh.param("rate", rate, int(10));
+    nh.param("rate", gRateFreq, int(30));
     nh.param("width", width, int(640));
     nh.param("height", height, int(480));
+
+    //Dynamic parameters initilisation
+    dynamic_reconfigure::Server<sdbackground::sdbgConfig> server;
+    dynamic_reconfigure::Server<sdbackground::sdbgConfig>::CallbackType f;
+
+    f = boost::bind(&callback, _1, _2);
+    server.setCallback(f);
 
     I = bmatrix(0, height, 0, width); // absolute difference
     D = bmatrix(0, height, 0, width); // absolute difference
@@ -104,16 +127,15 @@ int main(int argc, char **argv)
     image_transport::Subscriber sub = it.subscribe("in_image", 1, imageCallback);
     pub = it.advertise("out_image", 1);
 
-    // Tell ROS how fast to run this node.
-    ros::Rate r(rate);
-
     // Main loop.
     while (nh.ok())
     {
+        // Tell ROS how fast to run this node.
+        ros::Rate Rate(gRateFreq);// = ros::Rate(gRateFreq);
         ros::spinOnce();
         //Publish
         pub.publish(pubImage);
-        r.sleep();
+        Rate.sleep();
     }
 
     free_bmatrix(I, 0, width, 0);
