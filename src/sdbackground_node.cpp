@@ -11,8 +11,6 @@
  */
 extern "C" {
 #include "sdbackground_wrapper.h"
-#include "extern/def.h"
-#include "extern/nrutil.h"
 }
 
 //Global parameters for dynamic use
@@ -91,6 +89,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr &image)
             }
         }
         routine_UpdateM(I,0, height, 0, width,M);
+    }
+    else{
+        ROS_INFO("Only mono8 image");
     }
 }
 
