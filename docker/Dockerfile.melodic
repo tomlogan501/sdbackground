@@ -11,4 +11,5 @@ COPY . root/catkin_ws/src/sdbackground
 #Launch the compile
 RUN /bin/bash -c ' source /opt/ros/melodic/setup.bash \
         && cd root/catkin_ws\
-	&& catkin_make'
+	&& catkin_make\
+        && catkin_make run_tests'
