@@ -1,0 +1,26 @@
+<launch>
+
+  <!-- WEBCAM -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="framerate" value="10" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node
+>
+  <node name="image_proc" pkg="image_proc" type="image_proc" output="screen" args=" image_raw:=usb_cam/image_raw image_mono:=image_usb_mono camera_info:=usb_cam/camera_info">
+  </node>
+
+  <node name="image_view1" pkg="image_view" type="image_view" respawn="false" output="screen" args="image:=image_usb_mono">
+    <param name="autosize" value="true" />
+  </node>
+
+  <node name="image_view2" pkg="image_view" type="image_view" respawn="false" output="screen" args="image:=out_image">
+    <param name="autosize" value="true" />
+  </node>
+
+</launch>
+
