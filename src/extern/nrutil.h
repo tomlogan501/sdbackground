@@ -4,12 +4,12 @@
 #ifndef __NRUTIL_H__
 #define __NRUTIL_H__
 
-
 #define NR_END 0
 #define FREE_ARG char*
 
 #include "def.h"
 extern long nr_end;
+
 
 /* ------------------------------- */
 /* -- vector & matrix allocator -- */
