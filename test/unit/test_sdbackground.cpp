@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <iostream>
-#include <filesystem>
-namespace fs = std::filesystem;
+
+#include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
+
+using namespace boost::filesystem;
 
 //Link to extern
 extern "C"
@@ -204,11 +207,19 @@ void generatePictures(const char *src_path,const char *dst_path)
 
 } //Extern C
 
-std::size_t number_of_files_in_directory(std::filesystem::path path)
+///
+/// \brief number_of_files_in_directory : Function to get the number of files per directory (Using boost filesystem)
+/// \param sPath : Path to the directory
+/// \return The quantity of files
+///
+std::size_t number_of_files_in_directory(const char* sPath)
 {
-    using std::filesystem::directory_iterator;
-    using fp = bool (*)( const std::filesystem::path&);
-    return std::count_if(directory_iterator(path), directory_iterator{}, (fp)std::filesystem::is_regular_file);
+    path the_path( sPath );
+
+    return std::count_if(
+        directory_iterator(the_path),
+        directory_iterator(),
+        static_cast<bool(*)(const path&)>(is_regular_file) );
 }
 
 ///
@@ -253,7 +264,7 @@ void checkResults(const char *src_path,const char *gt_path)
     gtImage =   bmatrix(0, height, 0, width); // absolute difference
 
 
-    for (const auto & entry : fs::directory_iterator(src_path))
+        for(auto& entry : boost::make_iterator_range(directory_iterator(src_path), {}))
     {
         MLoadPGM_bmatrix((char*)entry.path().c_str(), 0, height, 0, width, srcImage);
         std::string gdFile = std::string(gt_path) +"/"+ std::string(entry.path().filename().c_str());
