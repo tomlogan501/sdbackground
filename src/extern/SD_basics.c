@@ -12,7 +12,7 @@
 
 #include "def.h"
 #include "nrutil.h"
-
+//LCOV_EXCL_START
 float Freq;
 
 /* ------------------ */
@@ -35,7 +35,9 @@ void setFreq(float f)
 /* --------------- */
 {
     Freq = f;
+#ifdef DEBUG
     printf("Freq = %.0f MHz\n", Freq/1e6);
+#endif
 }
 /* ---------------------------------------- */
 void printCPP(char *str, double dt,  int size)
@@ -78,6 +80,7 @@ byte sign(byte b0, byte b1) {
   else if (b0>b1) return 1;
   else return 0;
 }
+//LCOV_EXCL_STOP
 
 /* ------------------------------------------------------------------------------ */
 void Routine_Put_Initial_Value(int i0, int i1, int j0, int j1, byte x_init, byte **X)

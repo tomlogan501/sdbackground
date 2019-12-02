@@ -23,7 +23,7 @@
 //#define FREE_ARG char*
 
 long nr_end = NR_END;
-
+//LCOV_EXCL_START
 /* ------------------------- */
 void nrerror(char error_text[])
 /* ------------------------- */
@@ -34,6 +34,7 @@ void nrerror(char error_text[])
   fprintf(stderr,"...now exiting to system...\n");
   exit(-1);
 }
+//LCOV_EXCL_STOP
 /* ------------------------------ */
 float64* f64vector(long nl, long nh)
 /* ------------------------------ */

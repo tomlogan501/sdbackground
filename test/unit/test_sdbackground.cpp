@@ -15,7 +15,7 @@ extern "C"
 
 #include "sdbackground_wrapper_test.h"
 
-float Freq;
+static float Freq;
 
 /* ------------------ */
 long long readTSC (void)
@@ -30,14 +30,16 @@ long long readTSC (void)
 double dtime(void)
 /* ------------ */
 {
-    return (double) readTSC();
+    return double(readTSC());
 }
 /* ----------------- */
 void setFreq(float f)
 /* --------------- */
 {
     Freq = f;
+#ifdef DEBUG
     printf("Freq = %.0f MHz\n", Freq/1e6);
+#endif
 }
 /* ---------------------------------------- */
 void printCPP(char *str, double dt,  int size)
@@ -49,10 +51,12 @@ void printCPP(char *str, double dt,  int size)
     cpp = (float) dt / (float) size;
     ms = 1000.0f * (float) dt / (float) Freq;
 
+#ifdef DEBUG
     printf("%20s : ", str);
     printf("cycles = %10.0f ;", df);
     printf("cpp = %6.2f c/p ;", cpp);
     printf("t = %6.2f ms\n", ms);
+#endif
 }
 /* --------------------------------------------------------------------------------------------------------------------------------- */
 void generate_path_filename_k_ndigit_extension(char *path, char *filename, int k, int ndigit, char *extension, char *complete_filename)
@@ -81,7 +85,11 @@ byte sign(byte b0, byte b1) {
     else return 0;
 }
 
+#ifdef DEBUG
 #define CHRONO(X, str) t1=dtime(); X; t2 = dtime(); dt = t2-t1; printCPP(str, dt, size);
+#else
+#define CHRONO(X, str) t1=dtime(); X; t2 = dtime(); dt = t2-t1;;
+#endif
 
 ///
 /// \brief generatePictures : generate the set of image to be compared to ground truth
@@ -124,9 +132,11 @@ void generatePictures(const char *src_path,const char *dst_path)
     long size;
     double  t1, t2, dt;
 
+#ifdef DEBUG
     printf("src_path = %s\n", src_path);
     printf("filename = %s\n", filename);
     printf("dst_path = %s\n", dst_path);
+#endif
 
     i0 = 0; i1 = height;
     j0 = 0; j1 = width;
@@ -151,16 +161,17 @@ void generatePictures(const char *src_path,const char *dst_path)
     tstep  = 1;
 
     generate_path_filename_k_ndigit_extension((char*)src_path, filename, tstart, ndigit, "pgm", cfilenameI);
+
+#ifdef DEBUG
     puts(cfilenameI);
+#endif
+
     // SD parameters initialization
     MLoadPGM_bmatrix (cfilenameI, i0, i1, j0, j1, M); // Multiple-Load without allocating matrix
     Routine_Put_Initial_Value(i0, i1, j0, j1, v_min, V);
 
     for(t=tstart+1; t<=tstop; t+=tstep) {
-
         generate_path_filename_k_ndigit_extension((char*)src_path, filename, t, ndigit, "pgm", cfilenameI); // generate filename of current image
-        //puts(cfilenameI);
-
         MLoadPGM_bmatrix (cfilenameI, i0, i1, j0, j1, I);  // load current image
 
         // routine of computation
@@ -190,6 +201,14 @@ void generatePictures(const char *src_path,const char *dst_path)
     free_bmatrix(E, 0, width, 0);
     free_bmatrix(D, 0, width, 0);
 }
+
+} //Extern C
+
+std::size_t number_of_files_in_directory(std::filesystem::path path)
+{
+    using std::filesystem::directory_iterator;
+    using fp = bool (*)( const std::filesystem::path&);
+    return std::count_if(directory_iterator(path), directory_iterator{}, (fp)std::filesystem::is_regular_file);
 }
 
 ///
@@ -202,9 +221,9 @@ void generatePictures(const char *src_path,const char *dst_path)
 void checkImage(byte **srcImage1, byte **srcImage2,unsigned int width,unsigned int height)
 {
     for(unsigned int i=0; i<=height; i++) {
-      for(unsigned int j=0; j<=width; j++) {
-        ASSERT_EQ(srcImage1[i][j],srcImage2[i][j]);
-      }
+        for(unsigned int j=0; j<=width; j++) {
+            ASSERT_EQ(srcImage1[i][j],srcImage2[i][j]);
+        }
     }
 }
 
@@ -216,15 +235,9 @@ void checkImage(byte **srcImage1, byte **srcImage2,unsigned int width,unsigned i
 void checkResults(const char *src_path,const char *gt_path)
 {
     int iSizeSrc,iSizeGT=0;
-    for (const auto & entry : fs::directory_iterator(src_path))
-    {
-        iSizeSrc++;
-    }
 
-    for (const auto & entry : fs::directory_iterator(gt_path))
-    {
-        iSizeGT++;
-    }
+    iSizeSrc = int(number_of_files_in_directory(src_path));
+    iSizeGT = int(number_of_files_in_directory(gt_path));
 
     if(iSizeGT != iSizeSrc)
     {

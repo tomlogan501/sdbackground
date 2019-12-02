@@ -15,6 +15,12 @@ find_package(catkin REQUIRED COMPONENTS
     dynamic_reconfigure
     )
 
+if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
+    find_package(code_coverage REQUIRED)
+    # Add compiler flags for coverage instrumentation before defining any targets
+    APPEND_COVERAGE_COMPILER_FLAGS()
+endif()
+
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
@@ -99,6 +105,17 @@ install(FILES
 
 ## Add gtest based cpp test target and link libraries
 if(CATKIN_ENABLE_TESTING)
+
+    # Create a target ${PROJECT_NAME}_coverage_report
+    if(ENABLE_COVERAGE_TESTING)
+        set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test/*"
+            "*/${PROJECT_NAME}/build/*")
+        add_code_coverage(
+            NAME ${PROJECT_NAME}_coverage_report
+            DEPENDENCIES tests
+            )
+    endif()
+
     catkin_add_gtest(${PROJECT_NAME}_test
         test/unit/test_sdbackground.cpp
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test/unit)
