@@ -8,6 +8,9 @@ RUN /bin/bash -c 'cd /root/catkin_ws'
 RUN cd ..
 COPY . root/catkin_ws/src/sdbackground
 
+#Get the coverage package source code 
+RUN git clone http://git-u2is.ensta.fr/u2is/code_coverage.git root/catkin_ws/src/code_coverage
+
 #Launch the compile
 RUN /bin/bash -c ' source /opt/ros/melodic/setup.bash \
         && cd root/catkin_ws\
