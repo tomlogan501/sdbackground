@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(sdbackground)
 
-## Compile as C++17, supported in ROS Kinetic and newer
+## Compile as C++11, supported in ROS Kinetic and newer
 set (CMAKE_CXX_FLAGS "-std=c++11")
 
 ## Find catkin macros and libraries
@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     image_transport
     dynamic_reconfigure
+    roslint
     )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -42,6 +43,9 @@ generate_dynamic_reconfigure_options(
 ###########
 ## Build ##
 ###########
+
+## Create lint target
+roslint_cpp()
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
