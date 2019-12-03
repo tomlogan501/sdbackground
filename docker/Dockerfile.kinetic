@@ -14,9 +14,13 @@ RUN git clone http://git-u2is.ensta.fr/u2is/code_coverage.git root/catkin_ws/src
 #Get lint
 RUN git clone http://git-u2is.ensta.fr/u2is/roslint.git root/catkin_ws/src/roslint
 
+#For coverage
+RUN apt-get update && apt-get install -y lcov
+
 #Launch the compile
 RUN /bin/bash -c ' source /opt/ros/kinetic/setup.bash \
 	&& cd root/catkin_ws\
 	&& catkin_make\
 	&& catkin_make run_tests\
-	&& catkin_make roslint_sdbackground'
+	&& catkin_make roslint_sdbackground\
+        && catkin_make -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug sdbackground_coverage_report'

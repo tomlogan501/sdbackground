@@ -286,6 +286,7 @@ void checkResults(const char *src_path,const char *gt_path)
 TEST(UnitTest, testUnit1)
 {
     // Creating a directory for output results
+    if (!exists("result"))
     if (mkdir("result", 0777) == -1)
     {
         std::cerr << "Error :  " << strerror(errno) << std::endl;
