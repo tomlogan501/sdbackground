@@ -45,7 +45,9 @@ generate_dynamic_reconfigure_options(
 ###########
 
 ## Create lint target
-roslint_cpp()
+roslint_cpp(
+    src/sdbackground_node.cpp
+    )
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
