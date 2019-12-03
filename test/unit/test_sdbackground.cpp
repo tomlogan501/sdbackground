@@ -4,6 +4,9 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/regex.hpp>
+
+const boost::regex my_filter( ".+.pgm" );
 
 using namespace boost::filesystem;
 
@@ -212,14 +215,16 @@ void generatePictures(const char *src_path,const char *dst_path)
 /// \param sPath : Path to the directory
 /// \return The quantity of files
 ///
-std::size_t number_of_files_in_directory(const char* sPath)
+unsigned int number_of_files_in_directory(const char* sPath)
 {
-    path the_path( sPath );
-
-    return std::count_if(
-        directory_iterator(the_path),
-        directory_iterator(),
-        static_cast<bool(*)(const path&)>(is_regular_file) );
+    unsigned int iNumber = 0;
+    boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
+    for( boost::filesystem::directory_iterator i( sPath ); i != end_itr; ++i )
+    {
+        if( !boost::regex_match( i->path().filename().c_str(), my_filter ) ) continue;
+        iNumber++;
+    }
+    return iNumber;
 }
 
 ///
@@ -250,11 +255,12 @@ void checkResults(const char *src_path,const char *gt_path)
     iSizeSrc = int(number_of_files_in_directory(src_path));
     iSizeGT = int(number_of_files_in_directory(gt_path));
 
-    if(iSizeGT != iSizeSrc)
+    if(iSizeGT != iSizeSrc || iSizeGT == 0 || iSizeSrc == 0)
     {
         std::cout << "Different size of images sets: Source " <<  iSizeSrc << " : Ground truth "  <<iSizeGT << std::endl;
         FAIL();
     }
+
 
     unsigned int width    = 320;
     unsigned int height   = 240;
@@ -264,13 +270,11 @@ void checkResults(const char *src_path,const char *gt_path)
     gtImage =   bmatrix(0, height, 0, width); // absolute difference
 
 
-        for(auto& entry : boost::make_iterator_range(directory_iterator(src_path), {}))
+    for(auto& entry : boost::make_iterator_range(directory_iterator(src_path), {}))
     {
         MLoadPGM_bmatrix((char*)entry.path().c_str(), 0, height, 0, width, srcImage);
         std::string gdFile = std::string(gt_path) +"/"+ std::string(entry.path().filename().c_str());
         MLoadPGM_bmatrix((char*)gdFile.c_str(), 0, height, 0, width, gtImage);
-
-        //std::cout << gdFile.c_str() << "::" <<entry.path().c_str() << std::endl;
 
         checkImage(srcImage,gtImage,width,height);
     }
