@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <iostream>
+#include <sys/stat.h>
 
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -261,7 +262,6 @@ void checkResults(const char *src_path,const char *gt_path)
         FAIL();
     }
 
-
     unsigned int width    = 320;
     unsigned int height   = 240;
 
@@ -285,8 +285,15 @@ void checkResults(const char *src_path,const char *gt_path)
 
 TEST(UnitTest, testUnit1)
 {
-    generatePictures("dataset/","result_images/");
-    checkResults("result_images/","ground_truth/");
+    // Creating a directory for output results
+    if (mkdir("result", 0777) == -1)
+    {
+        std::cerr << "Error :  " << strerror(errno) << std::endl;
+        exit(1);
+    }
+
+    generatePictures("dataset/","result/");
+    checkResults("result/","ground_truth/");
 }
 
 // Run all the tests that were declared with TEST()
