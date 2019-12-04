@@ -23,9 +23,11 @@ Call the linter for coding style compliance, can fail as a test to block job
 
 `catkin_make roslint_sdbackground`
 
-Get the coverage based on unit tests and generate a html report (dependency with package code_coverage and lcov (system)
+Get the coverage based on unit tests and generate a html report (dependency with package code_coverage and lcov (system) )
 
 `catkin_make -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug sdbackground_coverage_report`
+
+Consult package.xml for ros dependencies
 
 
 
