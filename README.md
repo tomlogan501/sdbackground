@@ -1,6 +1,8 @@
 # sdbackground
 
-Package incorporant le code d'Antoine basé sur l'algo sigma delta background extraction
+Package using Sigma Delta Background Substraction algorithm : [Paper](https://perso.ensta-paris.fr/~manzaner/Publis/ciarp07.pdf)
+
+Autor : Antoine Manzanera [mail](antoine.manzanera@ensta.fr)
 
 ### Status :
 
