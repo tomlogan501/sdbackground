@@ -1,6 +1,6 @@
 # sdbackground
 
-Package using Sigma Delta Background Substraction algorithm : [Paper](https://perso.ensta-paris.fr/~manzaner/Publis/ciarp07.pdf)
+Package using Sigma Delta Background Substraction algorithm : [Paper](https://www.researchgate.net/publication/220843310_Sigma-Delta_Background_Subtraction_and_the_Zipf_Law)
 
 Autor : Antoine Manzanera [mail](antoine.manzanera@ensta.fr)
 
