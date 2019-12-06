@@ -31,6 +31,28 @@ Get the coverage based on unit tests and generate a html report (dependency with
 
 Consult package.xml for ros dependencies
 
+### Node
+ `sdbackground_node.cpp`
+ The `sdbackground_node` provides a sdbackground node.
+ 
+### Subscribed topic
+ `in_image`
+ Inputs the image topic to treate
 
+### Published topic
+ `out_image`
+ Outputs the image topic result
 
+### Parameters
+ `amplification_factor`
+ 
+*  type = int
+*  default = 1`
+*  Amplication factor for the algorithm
+ 
+ `rate`
+
+*  type = int
+*  default = 10 
+*  Frequency treatment rate (Hz)
 
