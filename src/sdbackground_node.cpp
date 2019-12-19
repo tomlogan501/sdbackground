@@ -19,6 +19,8 @@ extern "C"
 // Global parameters for dynamic use
 static int gAmpliFactor = 10;
 static int gRateFreq = 30;
+// Output select
+static int gSelectedMatrix = 4;
 
 static image_transport::Publisher pub;
 
@@ -31,25 +33,27 @@ static const byte v_max = 255;
 static byte **I, **M, **V, **E, **D;
 static sensor_msgs::Image::Ptr pubImage;
 
+
 ///
 /// \brief callback : Callback when parameters are changed with the gui
 /// \param config : the structure config define in the cfg file
 /// \param level : N/A
 ///
-void callback(sdbackground::sdbgConfig& config, uint32_t level)
+void callback(sdbackground::sdbgConfig &config, uint32_t level)
 {
   //  ROS_INFO("Reconfigure Request: %d: Facteur d'amplification, %d: Frequence
   //  de traitement (Hz)",
   //            config.ampli_factor, config.ana_rate);
   gAmpliFactor = config.ampli_factor;
   gRateFreq = config.ana_rate;
+  gSelectedMatrix = config.selected_matrix;
 }
 
 ///
 /// \brief imageCallback : Callback to treat the image and call the code through
 /// the wrapper \param image : the image send
 ///
-void imageCallback(const sensor_msgs::ImageConstPtr& image)
+void imageCallback(const sensor_msgs::ImageConstPtr &image)
 {
   // Only mono for this package
   if (image->encoding == "mono8")
@@ -88,7 +92,25 @@ void imageCallback(const sensor_msgs::ImageConstPtr& image)
       for (uint j = 0; j < uint(width); j++)
       {
         new_index = i * uint(width) + j;
-        pubImage->data[new_index] = E[i][j];
+
+        switch (gSelectedMatrix)
+        {
+        case 1:
+          pubImage->data[new_index] = M[i][j];
+          break;
+        case 2:
+          pubImage->data[new_index] = D[i][j];
+          break;
+        case 3:
+          pubImage->data[new_index] = V[i][j];
+          break;
+        case 4:
+          pubImage->data[new_index] = E[i][j];
+          break;
+        default:
+          pubImage->data[new_index] = E[i][j];
+          break;
+        }
         // FOR TESTING PURPOSE //
         // pubImage->data[new_index] = i*255/height;
       }
@@ -101,7 +123,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& image)
   }
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   ros::init(argc, argv, "sdbackground");
   ros::NodeHandle nh;
@@ -110,6 +132,8 @@ int main(int argc, char** argv)
   nh.param("rate", gRateFreq, static_cast<int>(30));
   nh.param("width", width, static_cast<int>(640));
   nh.param("height", height, static_cast<int>(480));
+
+  nh.param("selected_matrix", gSelectedMatrix, static_cast<int>(4));
 
   // Dynamic parameters initilisation
   dynamic_reconfigure::Server<sdbackground::sdbgConfig> server;
@@ -138,7 +162,7 @@ int main(int argc, char** argv)
   while (nh.ok())
   {
     // Tell ROS how fast to run this node.
-    ros::Rate Rate(gRateFreq);  // = ros::Rate(gRateFreq);
+    ros::Rate Rate(gRateFreq);
     ros::spinOnce();
     // Publish
     pub.publish(pubImage);

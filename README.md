@@ -50,6 +50,12 @@ Consult package.xml for ros dependencies
 *  default = 1`
 *  Amplication factor for the algorithm
  
+ `selected_matrix`
+
+*  type = int
+*  default = 4
+*  Chosen intermediate matrix for teaching purpose (1: current SD-background, 2: absolute difference, 3: current SD-variance, 4: current Foreground)
+
  `rate`
 
 *  type = int

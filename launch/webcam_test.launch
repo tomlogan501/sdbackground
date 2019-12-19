@@ -18,6 +18,8 @@
     <param name="autosize" value="true" />
   </node>
 
+  <node name="rqt" pkg="rqt_reconfigure" type="rqt_reconfigure"/>
+
   <!-- SDBACKGROUND -->
   <node pkg="sdbackground" type="sdbackground_node" name="sdb" args="in_image:=image_usb_mono">
     <remap from="in_image" to="image_usb_mono"/>
