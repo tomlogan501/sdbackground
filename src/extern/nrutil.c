@@ -34,7 +34,6 @@ void nrerror(char error_text[])
   fprintf(stderr,"...now exiting to system...\n");
   exit(-1);
 }
-//LCOV_EXCL_STOP
 /* ------------------------------ */
 float64* f64vector(long nl, long nh)
 /* ------------------------------ */
@@ -46,6 +45,7 @@ float64* f64vector(long nl, long nh)
   if(!v) return NULL;
   return v-nl+NR_END;
 }
+//LCOV_EXCL_STOP
 /* ------------------------------------------------ */
 byte** bmatrix(long nrl, long nrh, long ncl, long nch)
 /* ------------------------------------------------ */
@@ -71,6 +71,7 @@ byte** bmatrix(long nrl, long nrh, long ncl, long nch)
   /* return pointer to array of pointers to rows */
   return m;
 }
+//LCOV_EXCL_START
 /* --------------------------------------------------- */
 rgb8** rgb8matrix(long nrl, long nrh, long ncl, long nch)
 /* -------------------------------------------------- */
@@ -103,6 +104,7 @@ void free_f64vector(float64 *v, long nl)
 {
   free((FREE_ARG) (v+nl-NR_END));
 }
+//LCOV_EXCL_STOP
 /* ------------------------------------------------------------- */
 void free_bmatrix(unsigned  char  **m, long nrl, long nrh, long ncl)
 /* ------------------------------------------------------------- */
@@ -111,6 +113,7 @@ void free_bmatrix(unsigned  char  **m, long nrl, long nrh, long ncl)
   free((FREE_ARG) (m[nrl]+ncl-NR_END));
   free((FREE_ARG) (m+nrl-NR_END));
 }
+//LCOV_EXCL_START
 /* ---------------------------------------------------------------- */
 void free_rgb8matrix(rgb8 **m, long nrl, long nrh, long ncl)
 /* ---------------------------------------------------------------- */
@@ -119,6 +122,7 @@ void free_rgb8matrix(rgb8 **m, long nrl, long nrh, long ncl)
   free((FREE_ARG) (m[nrl]+ncl-NR_END));
   free((FREE_ARG) (m+nrl-NR_END));
 }
+//LCOV_EXCL_STOP
 /* ------------------------ */
 /* -- PGM IO for bmatrix -- */
 /* ------------------------ */
@@ -162,6 +166,7 @@ char *readitem(FILE *file,char *buffer)
   *aux=0;
   return buffer;
 }
+//LCOV_EXCL_START
 /* ---------------------------------------------- */
 void ReadPGMrow(FILE *file, long width, byte  *line)
 /* ---------------------------------------------- */
@@ -384,3 +389,4 @@ void SavePPM_rgb8matrix(rgb8 **m, long nrl, long nrh, long ncl, long nch, char *
   /* fermeture du fichier */
   fclose(file);
 }
+//LCOV_EXCL_STOP

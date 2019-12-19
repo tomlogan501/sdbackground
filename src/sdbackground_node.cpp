@@ -142,7 +142,7 @@ int main(int argc, char **argv)
   f = boost::bind(&callback, _1, _2);
   server.setCallback(f);
 
-  I = bmatrix(0, height, 0, width);  // absolute difference
+  I = bmatrix(0, height, 0, width);  // input
   D = bmatrix(0, height, 0, width);  // absolute difference
   M = bmatrix(0, height, 0, width);  // current SD-background
   V = bmatrix(0, height, 0, width);  // current SD-variance
