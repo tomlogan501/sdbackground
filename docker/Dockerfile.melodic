@@ -7,8 +7,11 @@ RUN /bin/bash -c 'cd /root/catkin_ws'
 #Copy code
 COPY . root/catkin_ws/src/sdbackground
 
+#Get the coverage package source code 
+RUN git clone --branch 0.3.0 https://github.com/mikeferguson/code_coverage.git root/catkin_ws/src/code_coverage
+
 #For coverage
-RUN apt-get update && apt-get install -y lcov ros-melodic-code_coverage ros-melodic-roslint
+RUN apt-get update && apt-get install -y lcov ros-melodic-roslint
 
 #Launch the compile
 RUN /bin/bash -c ' source /opt/ros/melodic/setup.bash \

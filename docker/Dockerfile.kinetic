@@ -8,8 +8,11 @@ RUN /bin/bash -c 'cd /root/catkin_ws'
 RUN cd ..
 COPY . root/catkin_ws/src/sdbackground
 
+#Get the coverage package source code 
+RUN git clone --branch 0.3.0 https://github.com/mikeferguson/code_coverage.git root/catkin_ws/src/code_coverage
+
 #For coverage
-RUN apt-get update && apt-get install -y lcov ros-kinetic-code_coverage ros-kinetic-roslint
+RUN apt-get update && apt-get install -y lcov ros-kinetic-roslint
 
 #Launch the compile
 RUN /bin/bash -c ' source /opt/ros/kinetic/setup.bash \
