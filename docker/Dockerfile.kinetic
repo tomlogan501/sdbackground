@@ -9,7 +9,7 @@ RUN cd ..
 COPY . root/catkin_ws/src/sdbackground
 
 #For coverage
-RUN apt-get update && apt-get install -y lcov ros-kinetic-code-coverage ros-kinetic-roslint
+RUN apt-get update && apt-get install -y lcov ros-kinetic-code_coverage ros-kinetic-roslint
 
 #Launch the compile
 RUN /bin/bash -c ' source /opt/ros/kinetic/setup.bash \
