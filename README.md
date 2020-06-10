@@ -9,6 +9,8 @@ Autor : Antoine Manzanera [mail](antoine.manzanera@ensta.fr)
 Kinetic : [![Build Status](http://jenkins-u2is.ensta.fr:8080/buildStatus/icon?job=docker+sdbg+kinetic)](http://jenkins-u2is.ensta.fr:8080/view/sdbg/job/docker%20sdbg%20kinetic/)
 Melodic : [![Build Status](http://jenkins-u2is.ensta.fr:8080/buildStatus/icon?job=docker+sdbg+melodic)](http://jenkins-u2is.ensta.fr:8080/view/sdbg/job/docker%20sdbg%20melodic/)
 
+On Github : ![Docker Image CI](https://github.com/tomlogan501/sdbackground/workflows/Docker%20Image%20CI/badge.svg?branch=develop)
+
 Two jobs building the 2 docker images based on corresponding dockerfiles
 
 ### How to compile :
