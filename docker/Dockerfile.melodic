@@ -8,7 +8,7 @@ RUN /bin/bash -c 'cd /root/catkin_ws'
 COPY . root/catkin_ws/src/sdbackground
 
 #For coverage
-RUN apt-get update && apt-get install -y lcov ros-melodic-code-coverage ros-melodic-roslint
+RUN apt-get update && apt-get install -y lcov ros-melodic-code_coverage ros-melodic-roslint
 
 #Launch the compile
 RUN /bin/bash -c ' source /opt/ros/melodic/setup.bash \
